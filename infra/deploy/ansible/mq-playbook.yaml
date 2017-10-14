@@ -1,0 +1,6 @@
+---
+- hosts: activemqservers
+  roles:
+    - role: possemeeg.activemq
+      become: yes
+

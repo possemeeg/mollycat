@@ -1,0 +1,11 @@
+#servers = ['admin-service-1','hub-server-1','rest-service-1','database']
+#servers = ['database','rest-service-1','activemq']
+servers = ['activemq','activemqtest']
+servers.each_with_index do |box,index|
+  Vagrant.configure("2") do |config|
+      config.vm.define box do |config|
+        config.vm.box = "centos/7"
+        config.vm.network "public_network", ip: "192.168.1.#{index+20}"
+    end
+  end
+end

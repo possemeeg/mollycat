@@ -1,0 +1,46 @@
+---
+- file:
+    path: /opt/apache/activemq
+    state: directory
+
+- user:
+    name: "{{activemq.user}}"
+    home: /opt/apache/activemq
+
+- unarchive:
+    src: http://www.apache.org/dyn/closer.cgi?filename=/activemq/5.15.1/apache-activemq-5.15.1-bin.tar.gz&action=download
+    dest: /opt/apache/activemq
+    remote_src: yes
+
+- file:
+    path: /opt/apache/activemq
+    owner: activemq
+    group: users
+    recurse: yes
+
+- yum:
+    name: java
+    state: present
+    update_cache: yes
+
+- template:
+    src: activemq.j2
+    dest: /etc/default/activemq
+    mode: 0644
+
+- file:
+    src: /opt/apache/activemq/apache-activemq-5.15.1/bin/activemq
+    dest: /etc/init.d/activemq
+    state: link
+
+- name: add service
+  command: chkconfig --add activemq
+
+- name: config service startup
+  command: chkconfig activemq on
+
+- systemd:
+    name: activemq
+    state: started
+
+

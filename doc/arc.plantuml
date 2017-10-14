@@ -1,0 +1,80 @@
+@startuml
+component [web client 1] as c1
+component [web client 2] as c2
+component [phone client] as pc
+component [cli client] as clic
+interface HTTP as http
+interface REST as rest
+folder "Mollycat instance" {
+  component [hub server] as hs
+  component [admin service] as as
+  component [web service] as ws
+  component [rest service] as rs
+  component [git config] as config
+  database "users" as usrdb
+  database "streams" as strdb
+  database "linked hubs" as lnkdb
+  cloud "message bus" as msg1
+  interface "REST" as admint
+  hs <.up.> msg1
+  as <.up.> msg1
+  hs -down-> usrdb
+  hs -down-> strdb
+  note right of hs
+    core component
+    handles access to data
+    system can run on this component alone
+  end note
+  note right of as
+    client components (web services or cli)
+    manages links to other nodes
+    manages user and server configuration (possibly)
+  end note
+  as -down-> usrdb
+  as -down-> strdb
+  as -down-> lnkdb
+  as -up- admint
+  ws <..> msg1
+  rs <..> msg1
+  note right of ws
+    basic web access
+    browsers
+  end note
+  note left of rs
+    basic rest service
+    command line 
+    mobile apps
+  end note
+  note right of config
+    publicly stored in github or
+    private git server
+  end note
+  as <-up-> config
+  hs -up-> config
+  ws -up- http
+  rs -up- rest
+  c1 ..> http
+  c2 ..> http
+  c1 ..> rest
+  c2 ..> rest
+  pc ..> rest
+  clic ..> rest
+  component [interhub] as ih1
+  ih1 -up-> lnkdb
+  ih1 <.up.> msg1
+}
+interface "REST" as intrest1
+ih1 -down- intrest1
+interface "REST" as intrest2
+node "Mollycat sister instances" {
+  component [interhub] as ih2
+}
+ih2 -up- intrest2
+intrest1 <.down.> intrest2
+note as innote
+event-driven interface
+between nodes
+end note
+innote .right. intrest1
+innote .right. intrest2
+@enduml

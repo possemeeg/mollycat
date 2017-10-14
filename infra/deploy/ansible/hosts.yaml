@@ -1,0 +1,15 @@
+---
+databases:
+  hosts:
+    database:
+      ansible_host: 127.0.0.1
+      ansible_port: 2222
+      ansible_user: vagrant
+      ansible_ssh_private_key_file: /home/peter/pmg/dev/mollycat/infra/vagrant/.vagrant/machines/database/virtualbox/private_key
+activemqservers:
+  hosts:
+    activemq:
+      ansible_host: 192.168.1.21
+      ansible_port: 22
+      ansible_user: vagrant
+      ansible_ssh_private_key_file: /home/peter/pmg/dev/mollycat/infra/vagrant/.vagrant/machines/activemqtest/virtualbox/private_key

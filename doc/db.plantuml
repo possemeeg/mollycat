@@ -1,0 +1,44 @@
+@startuml
+!define table(x) class x << (T,#FFAAAA) >>
+!define primary_key(x) <u>x</u>
+!define foreign_key(x) x <FK>
+hide methods
+hide stereotypes
+
+table(local_user) {
+  primary_key(id)
+  username
+  name
+}
+table(remote_user) {
+  primary_key(id)
+  remote_id
+  foreign_key(remote_hub_id)
+}
+
+table(remote_hub) {
+  primary_key(id)
+  name
+  address
+}
+
+table(stream) {
+  primary_key(id)
+}
+
+table(stream_content) {
+  foreign_key(primary_key(stream_id))
+  primary_key(sequence)
+  foreign_key(local_user_id)
+  foreign_key(remote_user_id)
+  is_remote_user
+  content
+}
+
+
+stream "1" -- "0..*" stream_content
+stream_content "0..*" -- "0..*" local_user
+stream_content "0..*" -- "0..*" remote_user
+remote_hub "1" -- "0..*" remote_user
+
+@enduml

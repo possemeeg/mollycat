@@ -1,0 +1,36 @@
+---
+- yum:
+    name: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+    state: present
+
+- yum:
+    name: mysql-server
+    state: present
+    update_cache: yes
+
+- systemd:
+    name: mysqld
+    state: started
+
+- yum:
+    name: MySQL-python
+    state: present
+
+- mysql_db:
+    name: mollycat
+    state: present
+
+- mysql_user:
+    name: mollyapp
+    host: '%'
+    password: mollyapppass
+    priv: 'mollycat.*:SELECT,UPDATE'
+    priv: '*.*:ALL'
+    state: present
+
+- mysql_user:
+    name: mollyadmin
+    host: '%'
+    password: mollyadminpass
+    priv: 'mollycat.*:ALL'
+    state: present
