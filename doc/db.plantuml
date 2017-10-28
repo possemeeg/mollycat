@@ -1,19 +1,19 @@
 @startuml
 !define table(x) class x << (T,#FFAAAA) >>
 !define primary_key(x) <u>x</u>
-!define foreign_key(x) x <FK>
+!define foreign_key(x, y) x <FK to y>
 hide methods
 hide stereotypes
 
-table(local_user) {
+table(user) {
   primary_key(id)
   username
   name
 }
 table(remote_user) {
-  primary_key(id)
-  remote_id
-  foreign_key(remote_hub_id)
+  foreign_key(primary_key(id),user)
+  remote_user_id
+  foreign_key(remote_hub_id,remote_hub)
 }
 
 table(remote_hub) {
@@ -27,18 +27,33 @@ table(stream) {
 }
 
 table(stream_content) {
-  foreign_key(primary_key(stream_id))
+  foreign_key(primary_key(stream_id),stream)
+  primary_key(patent_sequence)
   primary_key(sequence)
-  foreign_key(local_user_id)
-  foreign_key(remote_user_id)
-  is_remote_user
+  foreign_key(user_id,user)
   content
+}
+
+table(stream_publishers) {
+  foreign_key(primary_key(stream_id),stream)
+  primary_key(user_id)
+  joined_at_sequence
+}
+
+table(stream_subscribers) {
+  foreign_key(primary_key(stream_id),stream)
+  primary_key(user_id)
+  joined_at_sequence
 }
 
 
 stream "1" -- "0..*" stream_content
-stream_content "0..*" -- "0..*" local_user
-stream_content "0..*" -- "0..*" remote_user
+stream_content "0..*" -- "0..*" user
 remote_hub "1" -- "0..*" remote_user
+stream "1" -- "1..*" stream_publishers
+stream "1" -- "1..*" stream_subscribers
+user "1" -- "0..*" stream_publishers
+user "1" -- "0..*" stream_subscribers
+user "1" -- "0" remote_user
 
 @enduml
